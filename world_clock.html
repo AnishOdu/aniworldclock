@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Clock - Japan | India | UTC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1600px;
+            width: 100%;
+        }
+
+        .clock-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .clock-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .timezone-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .country-flag {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        .timezone-name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .timezone-label {
+            font-size: 14px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .clock-display {
+            text-align: center;
+            margin: 25px 0;
+        }
+
+        .time {
+            font-size: 56px;
+            font-weight: 700;
+            color: #667eea;
+            letter-spacing: -2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .date {
+            font-size: 16px;
+            color: #4a5568;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        .day {
+            font-size: 14px;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+
+        .time-intervals {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e2e8f0;
+        }
+
+        .interval-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #718096;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .interval-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        .interval-item {
+            font-size: 13px;
+            color: #4a5568;
+            padding: 6px 10px;
+            background: #f7fafc;
+            border-radius: 6px;
+            text-align: center;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .interval-item.current {
+            background: #667eea;
+            color: white;
+            font-weight: 600;
+        }
+
+        .analog-clock {
+            width: 200px;
+            height: 200px;
+            border: 8px solid #e2e8f0;
+            border-radius: 50%;
+            margin: 20px auto;
+            position: relative;
+            background: white;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .analog-clock::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+        }
+
+        .hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            background: #2d3748;
+            border-radius: 10px;
+        }
+
+        .hour-hand {
+            width: 6px;
+            height: 50px;
+            background: #2d3748;
+            margin-left: -3px;
+        }
+
+        .minute-hand {
+            width: 4px;
+            height: 70px;
+            background: #4a5568;
+            margin-left: -2px;
+        }
+
+        .second-hand {
+            width: 2px;
+            height: 80px;
+            background: #667eea;
+            margin-left: -1px;
+        }
+
+        .clock-markers {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .marker {
+            position: absolute;
+            width: 2px;
+            height: 8px;
+            background: #cbd5e0;
+            left: 50%;
+            transform-origin: center 100px;
+        }
+
+        .marker:nth-child(3n) {
+            height: 12px;
+            width: 3px;
+            background: #a0aec0;
+        }
+
+        @media (max-width: 1400px) {
+            .container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .time {
+                font-size: 48px;
+            }
+
+            .analog-clock {
+                width: 160px;
+                height: 160px;
+            }
+
+            .hour-hand {
+                height: 40px;
+            }
+
+            .minute-hand {
+                height: 56px;
+            }
+
+            .second-hand {
+                height: 64px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Japan Clock -->
+        <div class="clock-card">
+            <div class="timezone-header">
+                <div class="country-flag">🇯🇵</div>
+                <div class="timezone-name">Tokyo</div>
+                <div class="timezone-label">Japan Standard Time (JST)</div>
+            </div>
+            <div class="clock-display">
+                <div class="time" id="japan-time">--:--:--</div>
+                <div class="date" id="japan-date">-</div>
+                <div class="day" id="japan-day">-</div>
+            </div>
+            <div class="analog-clock" id="japan-analog">
+                <div class="clock-markers" id="japan-markers"></div>
+                <div class="hand hour-hand" id="japan-hour"></div>
+                <div class="hand minute-hand" id="japan-minute"></div>
+                <div class="hand second-hand" id="japan-second"></div>
+            </div>
+            <div class="time-intervals">
+                <div class="interval-title">30-Min Intervals</div>
+                <div class="interval-grid" id="japan-intervals"></div>
+            </div>
+        </div>
+
+        <!-- India Clock -->
+        <div class="clock-card">
+            <div class="timezone-header">
+                <div class="country-flag">🇮🇳</div>
+                <div class="timezone-name">Mumbai</div>
+                <div class="timezone-label">India Standard Time (IST)</div>
+            </div>
+            <div class="clock-display">
+                <div class="time" id="india-time">--:--:--</div>
+                <div class="date" id="india-date">-</div>
+                <div class="day" id="india-day">-</div>
+            </div>
+            <div class="analog-clock" id="india-analog">
+                <div class="clock-markers" id="india-markers"></div>
+                <div class="hand hour-hand" id="india-hour"></div>
+                <div class="hand minute-hand" id="india-minute"></div>
+                <div class="hand second-hand" id="india-second"></div>
+            </div>
+            <div class="time-intervals">
+                <div class="interval-title">30-Min Intervals</div>
+                <div class="interval-grid" id="india-intervals"></div>
+            </div>
+        </div>
+
+        <!-- France Clock -->
+        <div class="clock-card">
+            <div class="timezone-header">
+                <div class="country-flag">🇫🇷</div>
+                <div class="timezone-name">Paris</div>
+                <div class="timezone-label">Central European Time (CET)</div>
+            </div>
+            <div class="clock-display">
+                <div class="time" id="france-time">--:--:--</div>
+                <div class="date" id="france-date">-</div>
+                <div class="day" id="france-day">-</div>
+            </div>
+            <div class="analog-clock" id="france-analog">
+                <div class="clock-markers" id="france-markers"></div>
+                <div class="hand hour-hand" id="france-hour"></div>
+                <div class="hand minute-hand" id="france-minute"></div>
+                <div class="hand second-hand" id="france-second"></div>
+            </div>
+            <div class="time-intervals">
+                <div class="interval-title">30-Min Intervals</div>
+                <div class="interval-grid" id="france-intervals"></div>
+            </div>
+        </div>
+
+        <!-- UTC Clock -->
+        <div class="clock-card">
+            <div class="timezone-header">
+                <div class="country-flag">🌍</div>
+                <div class="timezone-name">UTC</div>
+                <div class="timezone-label">Coordinated Universal Time</div>
+            </div>
+            <div class="clock-display">
+                <div class="time" id="utc-time">--:--:--</div>
+                <div class="date" id="utc-date">-</div>
+                <div class="day" id="utc-day">-</div>
+            </div>
+            <div class="analog-clock" id="utc-analog">
+                <div class="clock-markers" id="utc-markers"></div>
+                <div class="hand hour-hand" id="utc-hour"></div>
+                <div class="hand minute-hand" id="utc-minute"></div>
+                <div class="hand second-hand" id="utc-second"></div>
+            </div>
+            <div class="time-intervals">
+                <div class="interval-title">30-Min Intervals</div>
+                <div class="interval-grid" id="utc-intervals"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create clock markers
+        function createMarkers(containerId) {
+            const container = document.getElementById(containerId);
+            for (let i = 0; i < 12; i++) {
+                const marker = document.createElement('div');
+                marker.className = 'marker';
+                marker.style.transform = `rotate(${i * 30}deg)`;
+                container.appendChild(marker);
+            }
+        }
+
+        createMarkers('japan-markers');
+        createMarkers('india-markers');
+        createMarkers('france-markers');
+        createMarkers('utc-markers');
+
+        function updateClock(timezone, prefix) {
+            const now = new Date();
+            
+            // Get time components for the timezone
+            const timeString = now.toLocaleTimeString('en-US', {
+                timeZone: timezone,
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const dateString = now.toLocaleDateString('en-US', {
+                timeZone: timezone,
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            const dayString = now.toLocaleDateString('en-US', {
+                timeZone: timezone,
+                weekday: 'long'
+            });
+
+            // Update digital display
+            document.getElementById(`${prefix}-time`).textContent = timeString;
+            document.getElementById(`${prefix}-date`).textContent = dateString;
+            document.getElementById(`${prefix}-day`).textContent = dayString;
+
+            // Get time parts for analog clock
+            const timeParts = timeString.split(':');
+            const hours = parseInt(timeParts[0]);
+            const minutes = parseInt(timeParts[1]);
+            const seconds = parseInt(timeParts[2]);
+
+            // Calculate angles
+            const secondAngle = (seconds * 6); // 360/60
+            const minuteAngle = (minutes * 6) + (seconds * 0.1); // 360/60 + smooth movement
+            const hourAngle = ((hours % 12) * 30) + (minutes * 0.5); // 360/12 + smooth movement
+
+            // Update analog clock hands
+            document.getElementById(`${prefix}-second`).style.transform = `rotate(${secondAngle}deg)`;
+            document.getElementById(`${prefix}-minute`).style.transform = `rotate(${minuteAngle}deg)`;
+            document.getElementById(`${prefix}-hour`).style.transform = `rotate(${hourAngle}deg)`;
+
+            // Update 30-minute intervals
+            updateIntervals(timezone, prefix, hours, minutes);
+        }
+
+        function updateIntervals(timezone, prefix, currentHour, currentMinute) {
+            const container = document.getElementById(`${prefix}-intervals`);
+            
+            // Clear existing intervals
+            container.innerHTML = '';
+
+            // Generate 24 hour slots (48 half-hour intervals)
+            const intervals = [];
+            for (let h = 0; h < 24; h++) {
+                intervals.push(`${String(h).padStart(2, '0')}:00`);
+                intervals.push(`${String(h).padStart(2, '0')}:30`);
+            }
+
+            // Find current interval
+            const currentInterval = currentMinute < 30 ? 
+                `${String(currentHour).padStart(2, '0')}:00` : 
+                `${String(currentHour).padStart(2, '0')}:30`;
+
+            // Show intervals around current time (6 before, current, 6 after = 13 total)
+            const currentIndex = intervals.indexOf(currentInterval);
+            const startIndex = Math.max(0, currentIndex - 6);
+            const endIndex = Math.min(intervals.length, currentIndex + 7);
+
+            for (let i = startIndex; i < endIndex; i++) {
+                const div = document.createElement('div');
+                div.className = 'interval-item';
+                div.textContent = intervals[i];
+                
+                if (intervals[i] === currentInterval) {
+                    div.classList.add('current');
+                }
+                
+                container.appendChild(div);
+            }
+        }
+
+        function updateAllClocks() {
+            updateClock('Asia/Tokyo', 'japan');
+            updateClock('Asia/Kolkata', 'india');
+            updateClock('Europe/Paris', 'france');
+            updateClock('UTC', 'utc');
+        }
+
+        // Update immediately
+        updateAllClocks();
+
+        // Update every second
+        setInterval(updateAllClocks, 1000);
+    </script>
+</body>
+</html>
