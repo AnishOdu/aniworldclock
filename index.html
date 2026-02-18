@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World Clock - Japan | India | UTC</title>
     <style>
+		.menu-bar {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px 30px;
+    border-radius: 50px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+}
+
+.menu-bar menu {
+    display: flex;
+    gap: 25px;
+    list-style: none;
+}
+
+.menu-bar li {
+    font-weight: 600;
+    cursor: pointer;
+    color: #4a5568;
+    transition: color 0.3s ease;
+}
+
+.menu-bar li:hover {
+    color: #667eea;
+}
+
+body {
+    padding-top: 100px; /* prevent overlap */
+}
+
+		
+		
+		
         * {
             margin: 0;
             padding: 0;
@@ -237,6 +274,17 @@
     </style>
 </head>
 <body>
+	<nav class="menu-bar">
+    <menu>
+        <li onclick="goBack()">⬅ Previous Page</li>
+        <li onclick="scrollToClock('japan')">🇯🇵 Tokyo</li>
+        <li onclick="scrollToClock('india')">🇮🇳 Mumbai</li>
+        <li onclick="scrollToClock('france')">🇫🇷 Paris</li>
+        <li onclick="scrollToClock('utc')">🌍 UTC</li>
+    </menu>
+</nav>
+
+
     <div class="container">
         <!-- Japan Clock -->
         <div class="clock-card">
@@ -336,6 +384,23 @@
     </div>
 
     <script>
+		function goBack() {
+    if (document.referrer !== "") {
+        window.history.back();
+    } else {
+        alert("No previous page found.");
+    }
+}
+
+	
+		function scrollToClock(prefix) {
+    document.getElementById(`${prefix}-analog`)
+        .scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+	
+	
+	
         // Create clock markers
         function createMarkers(containerId) {
             const container = document.getElementById(containerId);
