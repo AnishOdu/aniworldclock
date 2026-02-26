@@ -276,7 +276,7 @@ body {
 <body>
 	<nav class="menu-bar">
     <menu>
-        <li onclick="goBack()">⬅ Previous Page</li>
+       
         <li onclick="scrollToClock('japan')">🇯🇵 Tokyo</li>
         <li onclick="scrollToClock('india')">🇮🇳 Mumbai</li>
         <li onclick="scrollToClock('france')">🇫🇷 Paris</li>
@@ -384,14 +384,7 @@ body {
     </div>
 
     <script>
-		function goBack() {
-    if (document.referrer !== "") {
-        window.history.back();
-    } else {
-        alert("No previous page found.");
-    }
-}
-
+		
 	
 		function scrollToClock(prefix) {
     document.getElementById(`${prefix}-analog`)
